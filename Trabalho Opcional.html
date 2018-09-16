@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Trabalho Opcional - LabWeb</title>
+    <style>
+      body{
+        background-color: #102938;
+        max-width: 600px;
+        margin: auto;
+        font-family: Calibri;
+        text-align: center;
+        color: #FFFFFF;
+      }
+      form div{
+        text-align: right;
+      }
+      input[type=submit]{
+        color:#fff;
+        background-color: #3fc3a2;
+        width: 40%;
+        cursor: pointer;
+      }
+      .inputs{
+        margin-bottom: 2px; 
+        width: 80%;
+      }
+      .box1{
+        padding: 2px;
+        border-style: groove;
+        margin-bottom: 5px;
+
+      }
+      .box{
+        grid-template-columns: 50% 50%;
+        text-align: left;
+        border-style: groove;
+        display: grid;
+        padding: 5px;
+      }
+      .box div{
+        display: inline-block;
+        border-style: groove;
+        margin: 2px;
+        min-width: 96%;
+        padding: 1px;
+      }
+      li{
+        cursor: pointer;
+        border-radius: 10px;
+        padding: 1px 2px 2px 2px;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset>
+      <legend>
+        <h1>Excursão</h1>
+      </legend>
+      <div class="box1">
+      <form name="dados">
+        <input type="hidden" name="posicao" value=""/>
+        <div><label>Nome: <input class="inputs" type="text" name="nome" required/></label></div>
+        <div><label>Idade: <input class="inputs" type="number" name="idade" min="0" max="120" required/></label></div>
+        <div id="divPai"><input style="display: none; float: left" type="submit" value="Excluir" name="botao2 "/></div>
+        <div><input type="submit" value="Adicionar" name="botao"/></div>
+      </form>
+      </div>
+      <div class="box">
+      <div>
+        <strong>Adulto</strong>
+        <ul type="square" >
+        </ul>
+      </div>
+      
+      <div>
+        <strong>Estudante</strong>
+        <ul id="estudante" type="square">
+        </ul>
+      </div>
+      </div>
+      <br>
+    
+  </fieldset>
+  Nome: Marcus Vinícius Vasconcelos de Almeida Cunha<br>
+  Matrícula: 201776013<br>
+  E-mail do SIGA: marcusvsc1@hotmail.com
+      <script>
+        var pessoa = [];
+        var a = function aux(x,del){
+          return function() {
+              pessoa.splice(x, 1);
+              limpaFormulario();
+              apresentaDados();
+              del.type = 'hidden';
+          }
+        }
+        function aux2(x,lii){
+          return function() {
+              var allLis = document.getElementsByTagName('li');
+              for (var i = allLis.length - 1; i >= 0; i--) {
+                  allLis[i].style.color = 'white';
+                  allLis[i].style.border = 'none';
+              };
+              lii.style.color = 'lightgreen';
+              lii.style.border = 'dotted';
+              var del = document.querySelector('input[value=Excluir]');
+              del.parentNode.removeChild(del);
+              del = document.createElement("input");
+              del.type = 'submit';
+              del.value = 'Excluir';
+              del.style.cssFloat = 'left';
+              document.getElementById('divPai').appendChild(del);
+              document.dados.nome.value = pessoa[x].nome;
+              document.dados.idade.value = pessoa[x].idade;
+              del.style.display = 'block';
+              del.addEventListener('click',a(x,del));
+              document.dados.posicao.value = x;
+              document.dados.botao.value = "Salvar";
+          }
+        }
+        function apresentaDados(){
+          
+          var ul = document.querySelector("ul");
+          var ul2 = document.getElementById("estudante");
+          ul.innerHTML = "";
+          ul2.innerHTML = "";
+          for (var i = 0; i<pessoa.length; i++) {
+            var li = document.createElement("li");
+            li.textContent = pessoa[i].nome;
+            if(pessoa[i].idade<18){
+              ul2.appendChild(li);
+            }else{
+              ul.appendChild(li);
+            }        
+            li.addEventListener('click', aux2(i,li));
+          }
+        }
+        function limpaFormulario(){
+          document.dados.reset();
+          document.dados.posicao.value = '';
+          document.dados.botao.value = "Adicionar";
+        }
+        function criaPessoa(){
+          var nome = document.dados.nome.value;
+          var idade = document.dados.idade.value;
+          limpaFormulario();
+          var p = {nome: nome, idade:idade};
+          pessoa.push(p);
+          apresentaDados();
+        }
+        function salvaPessoa(){
+          var del = document.querySelector('input[value=Excluir]');
+          del.type = 'hidden';
+          var posicao = document.dados.posicao.value;
+          var nome = document.dados.nome.value;
+          var idade = document.dados.idade.value;
+          limpaFormulario();
+          var p = {nome: nome, idade:idade};
+          pessoa[posicao] = p;
+          apresentaDados();
+          
+        }
+        document.dados.addEventListener("submit", enviaFormulario);
+        function enviaFormulario(e){
+          e.preventDefault();
+          if(document.dados.posicao.value === ''){
+            criaPessoa();
+          } else {
+            salvaPessoa();
+          }
+        }     
+      </script>
+  </body>
+</html>
